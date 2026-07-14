@@ -4,6 +4,21 @@ A personal portfolio site.
 
 ## Running locally
 
+Requires Node 22 (an `.nvmrc` is checked in, so `nvm use` picks it up).
+
+```sh
+nvm use        # or: nvm install 22
+npm install
+npm run dev    # dev server with live reload
+```
+
+To preview the exact static output that would go live:
+
+```sh
+npm run build
+npm run preview
+```
+
 ## Branching
 
 - All work branches from `develop` and merges back into `develop`.
@@ -12,7 +27,7 @@ A personal portfolio site.
 
 ## Editing content
 
-All content lives in the data objects at the top of `main.js`:
+All content lives in the data objects at the top of `public/main.js`:
 
 - `PROJECTS` / `SIDE_PROJECTS`: project cards
 - `EXPERIENCE`: work history
