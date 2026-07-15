@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "pull-blog": "node scripts/pull-blog.mjs"
+    "pull-blog": "node scripts/pull-blog.mjs",
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"
