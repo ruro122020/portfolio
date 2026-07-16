@@ -100,6 +100,12 @@ function esc(str) {
   return d.innerHTML;
 }
 
+// Render into a homepage-only container; a no-op on pages where it is absent
+function renderInto(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
 const depthClass = { docs: "depth-docs", building: "depth-building", deployed: "depth-deployed" };
 
 /* ── RENDER: PROJECTS ── */
@@ -126,13 +132,11 @@ function projectCardHTML(p, i, bordered) {
     </div>`;
 }
 
-document.getElementById("projectsGrid").innerHTML =
-  PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join("");
-document.getElementById("sideProjectsGrid").innerHTML =
-  SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join("");
+renderInto("projectsGrid", PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join(""));
+renderInto("sideProjectsGrid", SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join(""));
 
 /* ── RENDER: EXPERIENCE ── */
-document.getElementById("experienceList").innerHTML = EXPERIENCE.map((job) => {
+renderInto("experienceList", EXPERIENCE.map((job) => {
   const bullets = job.bullets.map((b) => `
     <li style="display:grid;grid-template-columns:auto 1fr;gap:0.85rem;font-size:0.9rem;line-height:1.6;color:var(--ink)">
       <span style="color:var(--accent);font-family:var(--mono);font-size:0.8rem;padding-top:0.1rem">—</span>
@@ -150,28 +154,28 @@ document.getElementById("experienceList").innerHTML = EXPERIENCE.map((job) => {
       <p style="font-size:0.9rem;color:var(--ink-muted);font-style:italic;margin-bottom:1.5rem;max-width:640px">${esc(job.summary)}</p>
       <ul style="list-style:none;display:flex;flex-direction:column;gap:0.85rem">${bullets}</ul>
     </div>`;
-}).join("");
+}).join(""));
 
 /* ── RENDER: SKILLS ── */
-document.getElementById("skillsGrid").innerHTML =
+renderInto("skillsGrid",
   Object.entries(SKILLS).map(([cat, items]) => `
     <div>
       <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.85rem">${esc(cat)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:0.4rem">${items.map((s) => `<span class="tag">${esc(s)}</span>`).join("")}</div>
-    </div>`).join("");
+    </div>`).join(""));
 
 /* ── RENDER: LEARNING ── */
-document.getElementById("learningList").innerHTML = LEARNING.map((item, i) => `
+renderInto("learningList", LEARNING.map((item, i) => `
   <div class="learning-item reveal" style="transition-delay:${i * 0.07}s">
     <div>
       <div class="learning-topic">${esc(item.topic)}</div>
       <div class="learning-desc">${esc(item.desc)}</div>
     </div>
     <span class="learning-depth ${depthClass[item.depth]}">${esc(item.depthLabel)}</span>
-  </div>`).join("");
+  </div>`).join(""));
 
 /* ── RENDER: BLOG ── */
-document.getElementById("blogList").innerHTML = POSTS.map((post, i) => {
+renderInto("blogList", POSTS.map((post, i) => {
   const external = post.link !== "#";
   const newTab = external ? ` target="_blank" rel="noopener noreferrer"` : "";
   return `
@@ -183,20 +187,19 @@ document.getElementById("blogList").innerHTML = POSTS.map((post, i) => {
     </div>
     <span class="blog-arrow">→</span>
   </a>`;
-}).join("");
+}).join(""));
 
 /* ── INTERACTIVITY ── */
 
-// Smooth scroll for any element with data-scroll
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-}
+// Smooth scroll for any element with data-scroll; when the target section is
+// not on this page, fall through so the browser follows the /#section href
 document.querySelectorAll("[data-scroll]").forEach((link) => {
   link.addEventListener("click", (e) => {
+    const target = document.getElementById(link.getAttribute("data-scroll"));
+    if (!target) return;
     e.preventDefault();
     closeDrawer();
-    scrollToId(link.getAttribute("data-scroll"));
+    target.scrollIntoView({ behavior: "smooth" });
   });
 });
 
