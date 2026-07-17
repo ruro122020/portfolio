@@ -34,11 +34,15 @@ const formattedDate = entry.data.date.toLocaleDateString('en-US', {
 ---
 
 <BaseLayout title={entry.data.title} description={entry.data.description}>
-  <section>
+  <section class="post">
     <article>
-      <h1>{entry.data.title}</h1>
-      <time datetime={entry.data.date.toISOString()}>{formattedDate}</time>
-      <Content />
+      <header class="post-header">
+        <h1 class="post-title">{entry.data.title}</h1>
+        <time class="post-date" datetime={entry.data.date.toISOString()}>{formattedDate}</time>
+      </header>
+      <div class="post-body">
+        <Content />
+      </div>
     </article>
   </section>
 </BaseLayout>

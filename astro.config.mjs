@@ -6,6 +6,11 @@ import { defineConfig } from 'astro/config';
 // original inline style block (no-visual-change requirement, issue #3).
 export default defineConfig({
   compressHTML: false,
+  markdown: {
+    shikiConfig: {
+      theme: 'catppuccin-latte',
+    },
+  },
   vite: {
     build: {
       cssMinify: false,
