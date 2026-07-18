@@ -46,27 +46,6 @@ const LEARNING = [
   },
 ];
 
-const POSTS = [
-  {
-    date: "May 2026",
-    title: "Custom RTOS in C (series)",
-    excerpt: "An ongoing series on building a real-time operating system in C from the ground up, working through the low-level mechanics one piece at a time.",
-    link: "https://ruthr.hashnode.dev/series/rtos-in-c",
-  },
-  {
-    date: "Sep 2025",
-    title: "Installing Docker Engine on ARM64 Debian Linux",
-    excerpt: "If Docker's default setup isn't working on ARM64 Debian Bookworm, this walks through the architecture and distribution checks that fixed it for me.",
-    link: "https://ruthr.hashnode.dev/installing-docker-engine-in-arm64-linux-debian",
-  },
-  {
-    date: "Oct 2024",
-    title: "API Template with Flask, SQLAlchemy, and PostgreSQL",
-    excerpt: "A reusable starting point for a Flask API: wiring up PostgreSQL with SQLAlchemy and Marshmallow, running migrations, and adding user auth with secure sessions.",
-    link: "https://ruthr.hashnode.dev/api-template-with-flask-sqlalchemy-postgresql",
-  },
-];
-
 const EXPERIENCE = [
   {
     role: "Junior Validation Automation Engineer",
@@ -173,21 +152,6 @@ renderInto("learningList", LEARNING.map((item, i) => `
     </div>
     <span class="learning-depth ${depthClass[item.depth]}">${esc(item.depthLabel)}</span>
   </div>`).join(""));
-
-/* ── RENDER: BLOG ── */
-renderInto("blogList", POSTS.map((post, i) => {
-  const external = post.link !== "#";
-  const newTab = external ? ` target="_blank" rel="noopener noreferrer"` : "";
-  return `
-  <a href="${esc(post.link)}"${newTab} class="blog-item reveal" style="transition-delay:${i * 0.07}s">
-    <div class="blog-date">${esc(post.date)}</div>
-    <div>
-      <div class="blog-title">${esc(post.title)}</div>
-      <div class="blog-excerpt">${esc(post.excerpt)}</div>
-    </div>
-    <span class="blog-arrow">→</span>
-  </a>`;
-}).join(""));
 
 /* ── INTERACTIVITY ── */
 

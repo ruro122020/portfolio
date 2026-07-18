@@ -1,5 +1,17 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { entrySlug } from '../loaders/blog.mjs';
+
+// Newest first; tie-break on id so the order is deterministic when dates match.
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date - a.data.date || a.id.localeCompare(b.id)
+);
+
+// YAML dates parse as UTC midnight; format in UTC too, or machines west of
+// Greenwich would print the month before the one written in the frontmatter.
+const postDate = (post) =>
+  post.data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
 <BaseLayout
@@ -69,7 +81,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="section-label reveal">Writing</div>
       <h2 class="reveal">Technical writing.</h2>
       <p class="section-intro reveal">I write to understand things better. Notes, breakdowns, and opinions on the systems I'm building and studying.</p>
-      <div class="blog-list" id="blogList"></div>
+      <div class="blog-list">
+        {posts.map((post, i) => (
+          <a href={`/blog/${entrySlug(post.id)}/`} class="blog-item reveal" style={`transition-delay:${i * 0.07}s`}>
+            <div class="blog-date">{postDate(post)}</div>
+            <div>
+              <div class="blog-title">{post.data.title}</div>
+              <div class="blog-excerpt">{post.data.description}</div>
+            </div>
+            <span class="blog-arrow">→</span>
+          </a>
+        ))}
+      </div>
     </section>
 
     <!-- ABOUT + CONTACT -->
