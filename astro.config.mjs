@@ -5,6 +5,8 @@ import { defineConfig } from 'astro/config';
 // cssMinify off so the built stylesheet diffs cleanly against the
 // original inline style block (no-visual-change requirement, issue #3).
 export default defineConfig({
+  site: 'https://ruro122020.github.io',
+  base: '/portfolio',
   compressHTML: false,
   markdown: {
     shikiConfig: {
