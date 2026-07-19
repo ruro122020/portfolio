@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      upload-pages-artifact:
+        description: Upload the built site as the GitHub Pages artifact
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      # Blog notes live in separate repos (blog-sources.json); dist/ is built
+      # from source here and uploaded as an artifact, never committed.
+      - run: npm run pull-blog
+      - run: npm run build
+      - if: inputs.upload-pages-artifact
+        uses: actions/configure-pages@v5
+      - if: inputs.upload-pages-artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
