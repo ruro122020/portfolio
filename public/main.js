@@ -46,27 +46,6 @@ const LEARNING = [
   },
 ];
 
-const POSTS = [
-  {
-    date: "May 2026",
-    title: "Custom RTOS in C (series)",
-    excerpt: "An ongoing series on building a real-time operating system in C from the ground up, working through the low-level mechanics one piece at a time.",
-    link: "https://ruthr.hashnode.dev/series/rtos-in-c",
-  },
-  {
-    date: "Sep 2025",
-    title: "Installing Docker Engine on ARM64 Debian Linux",
-    excerpt: "If Docker's default setup isn't working on ARM64 Debian Bookworm, this walks through the architecture and distribution checks that fixed it for me.",
-    link: "https://ruthr.hashnode.dev/installing-docker-engine-in-arm64-linux-debian",
-  },
-  {
-    date: "Oct 2024",
-    title: "API Template with Flask, SQLAlchemy, and PostgreSQL",
-    excerpt: "A reusable starting point for a Flask API: wiring up PostgreSQL with SQLAlchemy and Marshmallow, running migrations, and adding user auth with secure sessions.",
-    link: "https://ruthr.hashnode.dev/api-template-with-flask-sqlalchemy-postgresql",
-  },
-];
-
 const EXPERIENCE = [
   {
     role: "Junior Validation Automation Engineer",
@@ -100,6 +79,12 @@ function esc(str) {
   return d.innerHTML;
 }
 
+// Render into a homepage-only container; a no-op on pages where it is absent
+function renderInto(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
 const depthClass = { docs: "depth-docs", building: "depth-building", deployed: "depth-deployed" };
 
 /* ── RENDER: PROJECTS ── */
@@ -126,13 +111,11 @@ function projectCardHTML(p, i, bordered) {
     </div>`;
 }
 
-document.getElementById("projectsGrid").innerHTML =
-  PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join("");
-document.getElementById("sideProjectsGrid").innerHTML =
-  SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join("");
+renderInto("projectsGrid", PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join(""));
+renderInto("sideProjectsGrid", SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join(""));
 
 /* ── RENDER: EXPERIENCE ── */
-document.getElementById("experienceList").innerHTML = EXPERIENCE.map((job) => {
+renderInto("experienceList", EXPERIENCE.map((job) => {
   const bullets = job.bullets.map((b) => `
     <li style="display:grid;grid-template-columns:auto 1fr;gap:0.85rem;font-size:0.9rem;line-height:1.6;color:var(--ink)">
       <span style="color:var(--accent);font-family:var(--mono);font-size:0.8rem;padding-top:0.1rem">—</span>
@@ -150,53 +133,37 @@ document.getElementById("experienceList").innerHTML = EXPERIENCE.map((job) => {
       <p style="font-size:0.9rem;color:var(--ink-muted);font-style:italic;margin-bottom:1.5rem;max-width:640px">${esc(job.summary)}</p>
       <ul style="list-style:none;display:flex;flex-direction:column;gap:0.85rem">${bullets}</ul>
     </div>`;
-}).join("");
+}).join(""));
 
 /* ── RENDER: SKILLS ── */
-document.getElementById("skillsGrid").innerHTML =
+renderInto("skillsGrid",
   Object.entries(SKILLS).map(([cat, items]) => `
     <div>
       <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.85rem">${esc(cat)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:0.4rem">${items.map((s) => `<span class="tag">${esc(s)}</span>`).join("")}</div>
-    </div>`).join("");
+    </div>`).join(""));
 
 /* ── RENDER: LEARNING ── */
-document.getElementById("learningList").innerHTML = LEARNING.map((item, i) => `
+renderInto("learningList", LEARNING.map((item, i) => `
   <div class="learning-item reveal" style="transition-delay:${i * 0.07}s">
     <div>
       <div class="learning-topic">${esc(item.topic)}</div>
       <div class="learning-desc">${esc(item.desc)}</div>
     </div>
     <span class="learning-depth ${depthClass[item.depth]}">${esc(item.depthLabel)}</span>
-  </div>`).join("");
-
-/* ── RENDER: BLOG ── */
-document.getElementById("blogList").innerHTML = POSTS.map((post, i) => {
-  const external = post.link !== "#";
-  const newTab = external ? ` target="_blank" rel="noopener noreferrer"` : "";
-  return `
-  <a href="${esc(post.link)}"${newTab} class="blog-item reveal" style="transition-delay:${i * 0.07}s">
-    <div class="blog-date">${esc(post.date)}</div>
-    <div>
-      <div class="blog-title">${esc(post.title)}</div>
-      <div class="blog-excerpt">${esc(post.excerpt)}</div>
-    </div>
-    <span class="blog-arrow">→</span>
-  </a>`;
-}).join("");
+  </div>`).join(""));
 
 /* ── INTERACTIVITY ── */
 
-// Smooth scroll for any element with data-scroll
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-}
+// Smooth scroll for any element with data-scroll; when the target section is
+// not on this page, fall through so the browser follows the /#section href
 document.querySelectorAll("[data-scroll]").forEach((link) => {
   link.addEventListener("click", (e) => {
+    const target = document.getElementById(link.getAttribute("data-scroll"));
+    if (!target) return;
     e.preventDefault();
     closeDrawer();
-    scrollToId(link.getAttribute("data-scroll"));
+    target.scrollIntoView({ behavior: "smooth" });
   });
 });
 

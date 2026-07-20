@@ -1,0 +1,16 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "pull-blog": "node scripts/pull-blog.mjs",
+    "test": "node --test scripts/*.test.mjs src/loaders/*.test.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "gray-matter": "^4.0.3"
+  }
+}
