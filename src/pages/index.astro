@@ -9,9 +9,9 @@ const posts = (await getCollection('blog')).sort(
 );
 
 // YAML dates parse as UTC midnight; format in UTC too, or machines west of
-// Greenwich would print the month before the one written in the frontmatter.
+// Greenwich would print the day before the one written in the frontmatter.
 const postDate = (post) =>
-  post.data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+  post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
 // GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
 // with a slash depending on config, so strip it once and always join with "/".
