@@ -19,12 +19,6 @@ npm run build
 npm run preview
 ```
 
-## Branching
-
-- All work branches from `develop` and merges back into `develop`.
-- `main` is what GitHub Pages serves. It is updated only by merging a pull request from `develop`, so every commit that lands on `main` goes live immediately.
-
-
 ## Editing content
 
 Everything except blog content lives in the data objects at the top of `public/main.js`:
