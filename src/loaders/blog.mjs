@@ -88,7 +88,7 @@ export function noteRoutes(entries) {
     const slug = entrySlug(entry.id);
     if (seen.has(slug)) {
       throw new Error(
-        `duplicate blog slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /writing/${slug}/`
+        `duplicate note slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /writing/${slug}/`
       );
     }
     seen.set(slug, entry.id);
