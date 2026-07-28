@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NoteList from '../components/NoteList.astro';
-import { sortNotesNewestFirst } from '../loaders/blog.mjs';
+import { sortNotesNewestFirst } from '../lib/notes.mjs';
 
 // Only the three newest notes go on the homepage, so the section keeps a fixed
 // height as notes accumulate. The full list lives at /writing/.

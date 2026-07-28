@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { noteRoutes } from '../../loaders/blog.mjs';
+import { noteRoutes } from '../../lib/notes.mjs';
 
 export async function getStaticPaths() {
   return noteRoutes(await getCollection('blog'));

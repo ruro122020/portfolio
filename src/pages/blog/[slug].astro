@@ -10,7 +10,7 @@
 // /writing/<slug>/ and 404 on GitHub Pages. Do not "simplify" this into the
 // config option.
 import { getCollection } from 'astro:content';
-import { noteRoutes } from '../../loaders/blog.mjs';
+import { noteRoutes } from '../../lib/notes.mjs';
 
 export async function getStaticPaths() {
   // Reuse the real pages' route list so the redirects can never drift from it.

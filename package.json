@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "pull-blog": "node scripts/pull-blog.mjs",
-    "test": "node --test scripts/*.test.mjs src/loaders/*.test.mjs"
+    "test": "node --test scripts/*.test.mjs src/lib/*.test.mjs src/loaders/*.test.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0",

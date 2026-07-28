@@ -2,7 +2,7 @@
 // The list of notes, rendered identically wherever it appears: the homepage
 // Writing section and the /writing/ archive. Callers decide the order and how
 // many to pass in; this only renders what it is given.
-import { entrySlug, formatNoteDate } from '../loaders/blog.mjs';
+import { entrySlug, formatNoteDate } from '../lib/notes.mjs';
 
 interface Props {
   notes: { id: string; data: { title: string; description: string; date: Date } }[];
