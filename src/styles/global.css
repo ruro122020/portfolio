@@ -538,12 +538,12 @@
     .notes-archive-link:hover span {
       transform: translateX(4px);
     }
-    .blog-list {
+    .notes-list {
       display: flex;
       flex-direction: column;
       gap: 0;
     }
-    .blog-item {
+    .note-item {
       display: grid;
       grid-template-columns: 120px 1fr auto;
       align-items: baseline;
@@ -554,16 +554,16 @@
       color: inherit;
       transition: all 0.2s;
     }
-    .blog-item:first-child { border-top: 1px solid var(--rule); }
-    .blog-item:hover .blog-title { color: var(--accent); }
-    .blog-date {
+    .note-item:first-child { border-top: 1px solid var(--rule); }
+    .note-item:hover .note-title { color: var(--accent); }
+    .note-date {
       font-family: var(--mono);
       font-size: 0.65rem;
       letter-spacing: 0.06em;
       color: var(--ink-muted);
       padding-top: 0.15rem;
     }
-    .blog-title {
+    .note-title {
       font-family: var(--serif);
       font-size: 1.2rem;
       font-weight: 400;
@@ -571,17 +571,17 @@
       transition: color 0.2s;
       margin-bottom: 0.25rem;
     }
-    .blog-excerpt {
+    .note-excerpt {
       font-size: 0.82rem;
       color: var(--ink-muted);
     }
-    .blog-arrow {
+    .note-arrow {
       font-family: var(--mono);
       font-size: 0.9rem;
       color: var(--ink-muted);
       transition: color 0.2s, transform 0.2s;
     }
-    .blog-item:hover .blog-arrow {
+    .note-item:hover .note-arrow {
       color: var(--accent);
       transform: translateX(4px);
     }
@@ -844,11 +844,11 @@
       .learning-depth { align-self: flex-start; }
 
       /* Notes */
-      .blog-item {
+      .note-item {
         grid-template-columns: 1fr;
         gap: 0.35rem;
       }
-      .blog-arrow { display: none; }
+      .note-arrow { display: none; }
 
       /* Post */
       .post {

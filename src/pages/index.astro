@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { entrySlug, sortNotesNewestFirst, formatNoteDate } from '../loaders/blog.mjs';
+import NoteList from '../components/NoteList.astro';
+import { sortNotesNewestFirst } from '../loaders/blog.mjs';
 
 // Only the three newest notes go on the homepage, so the section keeps a fixed
 // height as notes accumulate. The full list lives at /writing/.
@@ -14,7 +15,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <BaseLayout
   title="Ruth Rojas | Systems Engineer"
-  description="Ruth Rojas — Junior Validation Automation Engineer. Distributed systems, Go (Golang), and embedded software."
+  description="Ruth Rojas, Junior Validation Automation Engineer. Distributed systems, Go (Golang), and embedded software."
 >
     <!-- HERO -->
     <section id="hero">
@@ -82,18 +83,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <div class="notes-archive reveal">
         <a href={`${base}/writing/`} class="notes-archive-link">All notes <span aria-hidden="true">→</span></a>
       </div>
-      <div class="blog-list">
-        {posts.map((post, i) => (
-          <a href={`${base}/writing/${entrySlug(post.id)}/`} class="blog-item reveal" style={`transition-delay:${i * 0.07}s`}>
-            <div class="blog-date">{formatNoteDate(post.data.date)}</div>
-            <div>
-              <div class="blog-title">{post.data.title}</div>
-              <div class="blog-excerpt">{post.data.description}</div>
-            </div>
-            <span class="blog-arrow">→</span>
-          </a>
-        ))}
-      </div>
+      <NoteList notes={posts} />
     </section>
 
     <!-- ABOUT + CONTACT -->
