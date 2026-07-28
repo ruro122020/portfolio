@@ -1,48 +1,40 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { entrySlug } from '../../loaders/blog.mjs';
+// Notes used to live at /blog/<slug>/. Those addresses are public, so they
+// keep resolving and send the visitor to the new /writing/<slug>/ page.
+//
+// This is written by hand rather than with Astro's config `redirects` option
+// on purpose. For a dynamic redirect, Astro builds the target with the
+// destination route's generator, and that generator is constructed without
+// `config.base`; nothing in the redirect render path adds the base back. On
+// this site (base: '/portfolio') the emitted refresh would point at
+// /writing/<slug>/ and 404 on GitHub Pages. Do not "simplify" this into the
+// config option.
+import { getCollection } from 'astro:content';
+import { noteRoutes } from '../../loaders/blog.mjs';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-
-  // Slugs must be unique because they are the whole URL. Two notes with the
-  // same filename in different folders collide; fail the build naming both.
-  const seen = new Map();
-  return posts.map((entry) => {
-    const slug = entrySlug(entry.id);
-    if (seen.has(slug)) {
-      throw new Error(
-        `duplicate blog slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /blog/${slug}/`
-      );
-    }
-    seen.set(slug, entry.id);
-    return { params: { slug }, props: { entry } };
-  });
+  // Reuse the real pages' route list so the redirects can never drift from it.
+  return noteRoutes(await getCollection('blog'));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-// YAML dates parse as UTC midnight; format in UTC too, or machines west of
-// Greenwich would print the day before the one written in the frontmatter.
-const formattedDate = entry.data.date.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  timeZone: 'UTC',
-});
+const { slug } = Astro.params;
+// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
+// with a slash depending on config, so strip it once and always join with "/".
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const target = `${base}/writing/${slug}/`;
+const canonical = new URL(target, Astro.site);
 ---
 
-<BaseLayout title={entry.data.title} description={entry.data.description}>
-  <section class="post">
-    <article>
-      <header class="post-header">
-        <h1 class="post-title">{entry.data.title}</h1>
-        <time class="post-date" datetime={entry.data.date.toISOString()}>{formattedDate}</time>
-      </header>
-      <div class="post-body">
-        <Content />
-      </div>
-    </article>
-  </section>
-</BaseLayout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="refresh" content={`0;url=${target}`} />
+<meta name="robots" content="noindex" />
+<link rel="canonical" href={canonical} />
+<title>Redirecting to {target}</title>
+</head>
+<body>
+  <p>This note has moved. <a href={target}>Continue to its new address</a>.</p>
+</body>
+</html>
