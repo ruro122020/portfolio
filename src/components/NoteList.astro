@@ -3,16 +3,13 @@
 // Writing section and the /writing/ archive. Callers decide the order and how
 // many to pass in; this only renders what it is given.
 import { entrySlug, formatNoteDate } from '../lib/notes.mjs';
+import { base } from '../lib/site.mjs';
 
 interface Props {
   notes: { id: string; data: { title: string; description: string; date: Date } }[];
 }
 
 const { notes } = Astro.props;
-
-// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
-// with a slash depending on config, so strip it once and always join with "/".
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <div class="notes-list">

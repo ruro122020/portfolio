@@ -3,14 +3,11 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NoteList from '../components/NoteList.astro';
 import { sortNotesNewestFirst } from '../lib/notes.mjs';
+import { base } from '../lib/site.mjs';
 
 // Only the three newest notes go on the homepage, so the section keeps a fixed
 // height as notes accumulate. The full list lives at /writing/.
 const posts = sortNotesNewestFirst(await getCollection('blog')).slice(0, 3);
-
-// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
-// with a slash depending on config, so strip it once and always join with "/".
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout

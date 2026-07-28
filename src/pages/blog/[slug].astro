@@ -11,17 +11,14 @@
 // config option.
 import { getCollection } from 'astro:content';
 import { noteRoutes } from '../../lib/notes.mjs';
+import { base } from '../../lib/site.mjs';
 
 export async function getStaticPaths() {
   // Reuse the real pages' route list so the redirects can never drift from it.
   return noteRoutes(await getCollection('blog'));
 }
 
-const { slug } = Astro.params;
-// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
-// with a slash depending on config, so strip it once and always join with "/".
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const target = `${base}/writing/${slug}/`;
+const { slug } = Astro.params;const target = `${base}/writing/${slug}/`;
 const canonical = new URL(target, Astro.site);
 ---
 
