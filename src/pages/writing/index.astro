@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteList from '../../components/NoteList.astro';
+import { sortNotesNewestFirst } from '../../lib/notes.mjs';
+
+const posts = sortNotesNewestFirst(await getCollection('blog'));
+---
+
+<BaseLayout
+  title="Writing | Ruth Rojas"
+  description="Every technical note Ruth Rojas has published: breakdowns and opinions on distributed systems, Go (Golang), and embedded software."
+>
+    <!-- The section deliberately carries no id. The nav's Writing link is
+         data-scroll="writing", and main.js only scrolls when an element with
+         that id exists on the current page. Giving this section the id would
+         make Writing scroll in place here instead of going back to the
+         homepage section. -->
+    <section class="notes-section">
+      <div class="section-label reveal">Writing</div>
+      <h1 class="reveal">Everything I've written.</h1>
+      <p class="section-intro reveal">Every note I've published.</p>
+      <NoteList notes={posts} />
+    </section>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+// The list of notes, rendered identically wherever it appears: the homepage
+// Writing section and the /writing/ archive. Callers decide the order and how
+// many to pass in; this only renders what it is given.
+import { entrySlug, formatNoteDate } from '../lib/notes.mjs';
+import { base } from '../lib/site.mjs';
+
+interface Props {
+  notes: { id: string; data: { title: string; description: string; date: Date } }[];
+}
+
+const { notes } = Astro.props;
+---
+
+<div class="notes-list">
+  {notes.map((note, i) => (
+    <a href={`${base}/writing/${entrySlug(note.id)}/`} class="note-item reveal" style={`transition-delay:${i * 0.07}s`}>
+      <div class="note-date">{formatNoteDate(note.data.date)}</div>
+      <div>
+        <div class="note-title">{note.data.title}</div>
+        <div class="note-excerpt">{note.data.description}</div>
+      </div>
+      <span class="note-arrow">→</span>
+    </a>
+  ))}
+</div>

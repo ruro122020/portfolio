@@ -500,25 +500,50 @@
       border: 1px solid rgba(100,180,120,0.25);
     }
 
-    /* ── BLOG ── */
-    #blog h2 {
+    /* ── NOTES ── */
+    .notes-section h1,
+    .notes-section h2 {
       font-family: var(--serif);
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 300;
       letter-spacing: -0.02em;
       margin-bottom: 0.5rem;
     }
-    #blog .section-intro {
+    .notes-section .section-intro {
       color: var(--ink-muted);
       max-width: 560px;
       margin-bottom: 3.5rem;
     }
-    .blog-list {
+    .notes-archive {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.25rem;
+    }
+    .notes-archive-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .notes-archive-link span {
+      transition: transform 0.2s;
+    }
+    .notes-archive-link:hover {
+      text-decoration: underline;
+    }
+    .notes-archive-link:hover span {
+      transform: translateX(4px);
+    }
+    .notes-list {
       display: flex;
       flex-direction: column;
       gap: 0;
     }
-    .blog-item {
+    .note-item {
       display: grid;
       grid-template-columns: 120px 1fr auto;
       align-items: baseline;
@@ -529,16 +554,16 @@
       color: inherit;
       transition: all 0.2s;
     }
-    .blog-item:first-child { border-top: 1px solid var(--rule); }
-    .blog-item:hover .blog-title { color: var(--accent); }
-    .blog-date {
+    .note-item:first-child { border-top: 1px solid var(--rule); }
+    .note-item:hover .note-title { color: var(--accent); }
+    .note-date {
       font-family: var(--mono);
       font-size: 0.65rem;
       letter-spacing: 0.06em;
       color: var(--ink-muted);
       padding-top: 0.15rem;
     }
-    .blog-title {
+    .note-title {
       font-family: var(--serif);
       font-size: 1.2rem;
       font-weight: 400;
@@ -546,17 +571,17 @@
       transition: color 0.2s;
       margin-bottom: 0.25rem;
     }
-    .blog-excerpt {
+    .note-excerpt {
       font-size: 0.82rem;
       color: var(--ink-muted);
     }
-    .blog-arrow {
+    .note-arrow {
       font-family: var(--mono);
       font-size: 0.9rem;
       color: var(--ink-muted);
       transition: color 0.2s, transform 0.2s;
     }
-    .blog-item:hover .blog-arrow {
+    .note-item:hover .note-arrow {
       color: var(--accent);
       transform: translateX(4px);
     }
@@ -818,12 +843,12 @@
       }
       .learning-depth { align-self: flex-start; }
 
-      /* Blog */
-      .blog-item {
+      /* Notes */
+      .note-item {
         grid-template-columns: 1fr;
         gap: 0.35rem;
       }
-      .blog-arrow { display: none; }
+      .note-arrow { display: none; }
 
       /* Post */
       .post {

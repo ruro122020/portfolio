@@ -5,7 +5,7 @@ import path from "node:path";
 import os from "node:os";
 import matter from "gray-matter";
 
-import { blogSchema, hasFrontmatter, blogLoader, entrySlug } from "./blog.mjs";
+import { blogSchema, hasFrontmatter, blogLoader } from "./blog.mjs";
 
 // A temp directory standing in for src/content/blog/, so tests never touch
 // the real pulled notes.
@@ -190,25 +190,6 @@ test("date coercion accepts quoted and unquoted YAML dates", () => {
     assert.equal(result.success, true);
     assert.equal(result.data.date.getTime(), new Date("2026-06-01").getTime());
   }
-});
-
-// ---------------------------------------------------------------------------
-// entrySlug: the URL segment is the last piece of the entry id
-// ---------------------------------------------------------------------------
-
-test("entrySlug returns the last segment of a nested id", () => {
-  assert.equal(
-    entrySlug("Iris/notes-english/01-async-fn-state-machines"),
-    "01-async-fn-state-machines"
-  );
-});
-
-test("entrySlug returns a flat id unchanged", () => {
-  assert.equal(entrySlug("note"), "note");
-});
-
-test("two different ids can produce the same slug: collisions are the page's job to reject", () => {
-  assert.equal(entrySlug("Iris/notes-english/note"), entrySlug("Other/deep/path/note"));
 });
 
 // ---------------------------------------------------------------------------

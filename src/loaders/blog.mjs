@@ -36,19 +36,6 @@ export function hasFrontmatter(text) {
 }
 
 /**
- * Derive the URL slug for an entry: the last "/"-separated segment of its id
- * ("Iris/notes-english/01-async-fn-state-machines" -> "01-async-fn-state-machines").
- * Different ids can share a slug; the page that builds the routes must reject
- * such collisions.
- * @param {string} id entry id as stored by the loader
- * @returns {string}
- */
-export function entrySlug(id) {
-  const segments = id.split("/");
-  return segments[segments.length - 1];
-}
-
-/**
  * Recursively collect .md file paths under dir.
  * @param {string} dir absolute directory path
  * @returns {string[]} absolute file paths, sorted for determinism

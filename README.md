@@ -19,12 +19,6 @@ npm run build
 npm run preview
 ```
 
-## Branching
-
-- All work branches from `develop` and merges back into `develop`.
-- `main` is what GitHub Pages serves. It is updated only by merging a pull request from `develop`, so every commit that lands on `main` goes live immediately.
-
-
 ## Editing content
 
 Everything except blog content lives in the data objects at the top of `public/main.js`:
@@ -85,7 +79,7 @@ npm run pull-blog
 npm run dev      # or: npm run build && npm run preview
 ```
 
-A published note appears in the Writing section and gets its own page at `/portfolio/blog/<slug>` (the site is served under the `/portfolio` base path), where the slug is the note's filename without `.md`.
+A published note gets its own page at `/portfolio/writing/<slug>` (the site is served under the `/portfolio` base path), where the slug is the note's filename without `.md`. The Writing section on the homepage lists the three newest notes; the full archive is at `/portfolio/writing/`. Notes used to live at `/portfolio/blog/<slug>`, and those addresses still work: they redirect to the new ones.
 
 ### 4. Merge to main
 

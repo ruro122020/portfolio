@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { base } from '../lib/site.mjs';
 
 interface Props {
   title: string;
@@ -7,10 +8,6 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
-
-// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
-// with a slash depending on config, so strip it once and always join with "/".
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <!DOCTYPE html>
@@ -33,7 +30,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <li><a href={`${base}/#projects`} data-scroll="projects">Projects</a></li>
       <li><a href={`${base}/#resume`} data-scroll="resume">Resume</a></li>
       <li><a href={`${base}/#learning`} data-scroll="learning">Learning</a></li>
-      <li><a href={`${base}/#blog`} data-scroll="blog">Writing</a></li>
+      <li><a href={`${base}/#writing`} data-scroll="writing">Writing</a></li>
       <li><a href={`${base}/#about`} data-scroll="about">About</a></li>
       <li><a href={`${base}/#contact`} data-scroll="contact">Contact</a></li>
     </ul>
@@ -43,7 +40,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <li><a href={`${base}/#projects`} data-scroll="projects">Projects</a></li>
     <li><a href={`${base}/#resume`} data-scroll="resume">Resume</a></li>
     <li><a href={`${base}/#learning`} data-scroll="learning">Learning</a></li>
-    <li><a href={`${base}/#blog`} data-scroll="blog">Writing</a></li>
+    <li><a href={`${base}/#writing`} data-scroll="writing">Writing</a></li>
     <li><a href={`${base}/#about`} data-scroll="about">About</a></li>
     <li><a href={`${base}/#contact`} data-scroll="contact">Contact</a></li>
   </ul>
