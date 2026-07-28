@@ -1,17 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { entrySlug } from '../loaders/blog.mjs';
+import { entrySlug, sortNotesNewestFirst, formatNoteDate } from '../loaders/blog.mjs';
 
-// Newest first; tie-break on id so the order is deterministic when dates match.
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date - a.data.date || a.id.localeCompare(b.id)
-);
-
-// YAML dates parse as UTC midnight; format in UTC too, or machines west of
-// Greenwich would print the day before the one written in the frontmatter.
-const postDate = (post) =>
-  post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+// Only the three newest notes go on the homepage, so the section keeps a fixed
+// height as notes accumulate. The full list lives at /writing/.
+const posts = sortNotesNewestFirst(await getCollection('blog')).slice(0, 3);
 
 // GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
 // with a slash depending on config, so strip it once and always join with "/".
@@ -60,8 +54,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <section id="resume">
       <div class="section-label reveal">Resume</div>
       <h2 class="reveal" style="font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:300;letter-spacing:-0.02em;margin-bottom:0.5rem">Experience.</h2>
-      <p class="section-intro reveal" style="color:var(--ink-muted);max-width:560px;margin-bottom:1.5rem">What I'm building and the impact it's had. Full r&eacute;sum&eacute; available as a PDF.</p>
-      <a href="Ruth_Rojas_Resume.pdf" class="btn-primary reveal" style="display:inline-block;margin-bottom:3.5rem" download>Download R&eacute;sum&eacute; (PDF)</a>
+      <p class="section-intro reveal" style="color:var(--ink-muted);max-width:560px;margin-bottom:1.5rem">What I'm building and the impact it's had. Full Resume available as a PDF.</p>
+      <a href="Ruth_Rojas_Resume.pdf" class="btn-primary reveal" style="display:inline-block;margin-bottom:3.5rem" download>Download Resume (PDF)</a>
       <div id="experienceList" style="border-top:1px solid var(--rule)"></div>
       <div class="reveal" style="margin-top:3.5rem">
         <div class="section-label" style="margin-bottom:2rem">Skills</div>
@@ -79,16 +73,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       </div>
     </section>
 
-    <!-- BLOG -->
+    <!-- WRITING -->
     <hr class="section-divider" />
-    <section id="blog">
+    <section id="writing" class="notes-section">
       <div class="section-label reveal">Writing</div>
       <h2 class="reveal">Technical writing.</h2>
       <p class="section-intro reveal">I write to understand things better. Notes, breakdowns, and opinions on the systems I'm building and studying.</p>
+      <div class="notes-archive reveal">
+        <a href={`${base}/writing/`} class="notes-archive-link">All notes <span aria-hidden="true">→</span></a>
+      </div>
       <div class="blog-list">
         {posts.map((post, i) => (
-          <a href={`${base}/blog/${entrySlug(post.id)}/`} class="blog-item reveal" style={`transition-delay:${i * 0.07}s`}>
-            <div class="blog-date">{postDate(post)}</div>
+          <a href={`${base}/writing/${entrySlug(post.id)}/`} class="blog-item reveal" style={`transition-delay:${i * 0.07}s`}>
+            <div class="blog-date">{formatNoteDate(post.data.date)}</div>
             <div>
               <div class="blog-title">{post.data.title}</div>
               <div class="blog-excerpt">{post.data.description}</div>

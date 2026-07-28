@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { entrySlug, sortNotesNewestFirst, formatNoteDate } from '../../loaders/blog.mjs';
+
+const posts = sortNotesNewestFirst(await getCollection('blog'));
+
+// GitHub Pages serves the site under /portfolio. BASE_URL may or may not end
+// with a slash depending on config, so strip it once and always join with "/".
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout
+  title="Writing | Ruth Rojas"
+  description="Every technical note Ruth Rojas has published: breakdowns and opinions on distributed systems, Go (Golang), and embedded software."
+>
+    <!-- The section deliberately carries no id. The nav's Writing link is
+         data-scroll="writing", and main.js only scrolls when an element with
+         that id exists on the current page. Giving this section the id would
+         make Writing scroll in place here instead of going back to the
+         homepage section. -->
+    <section class="notes-section">
+      <div class="section-label reveal">Writing</div>
+      <h1 class="reveal">Everything I've written.</h1>
+      <p class="section-intro reveal">Every note I've published.</p>
+      <div class="blog-list">
+        {posts.map((post, i) => (
+          <a href={`${base}/writing/${entrySlug(post.id)}/`} class="blog-item reveal" style={`transition-delay:${i * 0.07}s`}>
+            <div class="blog-date">{formatNoteDate(post.data.date)}</div>
+            <div>
+              <div class="blog-title">{post.data.title}</div>
+              <div class="blog-excerpt">{post.data.description}</div>
+            </div>
+            <span class="blog-arrow">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+</BaseLayout>
