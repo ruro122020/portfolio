@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { entrySlug, sortNotesNewestFirst, formatNoteDate, noteRoutes } from "./notes.mjs";
+import { entrySlug, sortNewestFirst, formatPieceDate, pieceRoutes } from "./writing.mjs";
 
 // ---------------------------------------------------------------------------
 // entrySlug: the URL segment is the last piece of the entry id
@@ -9,50 +9,50 @@ import { entrySlug, sortNotesNewestFirst, formatNoteDate, noteRoutes } from "./n
 
 test("entrySlug returns the last segment of a nested id", () => {
   assert.equal(
-    entrySlug("Iris/notes-english/01-async-fn-state-machines"),
+    entrySlug("Iris/essays/01-async-fn-state-machines"),
     "01-async-fn-state-machines"
   );
 });
 
 test("entrySlug returns a flat id unchanged", () => {
-  assert.equal(entrySlug("note"), "note");
+  assert.equal(entrySlug("piece"), "piece");
 });
 
 test("two different ids can produce the same slug: collisions are the page's job to reject", () => {
-  assert.equal(entrySlug("Iris/notes-english/note"), entrySlug("Other/deep/path/note"));
+  assert.equal(entrySlug("Iris/essays/piece"), entrySlug("Other/deep/path/piece"));
 });
 
 // ---------------------------------------------------------------------------
-// sortNotesNewestFirst: newest first, deterministic on a tie
+// sortNewestFirst: newest first, deterministic on a tie
 // ---------------------------------------------------------------------------
 
-test("sortNotesNewestFirst puts the newer note first", () => {
+test("sortNewestFirst puts the newer piece first", () => {
   const older = { id: "a", data: { date: new Date("2026-06-01") } };
   const newer = { id: "b", data: { date: new Date("2026-07-01") } };
 
   assert.deepEqual(
-    sortNotesNewestFirst([older, newer]).map((entry) => entry.id),
+    sortNewestFirst([older, newer]).map((entry) => entry.id),
     ["b", "a"]
   );
 });
 
-test("sortNotesNewestFirst tie-breaks on id when the dates are equal", () => {
+test("sortNewestFirst tie-breaks on id when the dates are equal", () => {
   const sameDay = new Date("2026-06-01");
-  const second = { id: "Iris/notes-english/02-second", data: { date: sameDay } };
-  const first = { id: "Iris/notes-english/01-first", data: { date: sameDay } };
+  const second = { id: "Iris/essays/02-second", data: { date: sameDay } };
+  const first = { id: "Iris/essays/01-first", data: { date: sameDay } };
 
   assert.deepEqual(
-    sortNotesNewestFirst([second, first]).map((entry) => entry.id),
-    ["Iris/notes-english/01-first", "Iris/notes-english/02-second"]
+    sortNewestFirst([second, first]).map((entry) => entry.id),
+    ["Iris/essays/01-first", "Iris/essays/02-second"]
   );
 });
 
-test("sortNotesNewestFirst does not mutate its input", () => {
+test("sortNewestFirst does not mutate its input", () => {
   const older = { id: "a", data: { date: new Date("2026-06-01") } };
   const newer = { id: "b", data: { date: new Date("2026-07-01") } };
   const entries = [older, newer];
 
-  const sorted = sortNotesNewestFirst(entries);
+  const sorted = sortNewestFirst(entries);
 
   assert.notEqual(sorted, entries, "a new array is returned");
   assert.deepEqual(
@@ -63,49 +63,49 @@ test("sortNotesNewestFirst does not mutate its input", () => {
 });
 
 // ---------------------------------------------------------------------------
-// formatNoteDate: the row shows the day written in the frontmatter
+// formatPieceDate: the row shows the day written in the frontmatter
 // ---------------------------------------------------------------------------
 
-test("formatNoteDate prints the frontmatter day, not the local-timezone day", () => {
+test("formatPieceDate prints the frontmatter day, not the local-timezone day", () => {
   // A YAML date parses to UTC midnight. Formatted in local time west of
   // Greenwich that instant is still the previous day, so the format must
   // pin the timezone to UTC. This assertion holds on any machine.
-  assert.equal(formatNoteDate(new Date("2026-07-12")), "Jul 12, 2026");
+  assert.equal(formatPieceDate(new Date("2026-07-12")), "Jul 12, 2026");
 });
 
 // ---------------------------------------------------------------------------
-// noteRoutes: one route per note, collisions fail the build
+// pieceRoutes: one route per piece, collisions fail the build
 // ---------------------------------------------------------------------------
 
-test("noteRoutes maps a nested id to its last segment as the slug", () => {
-  const entry = { id: "Iris/notes-english/01-async-fn-state-machines", data: {} };
+test("pieceRoutes maps a nested id to its last segment as the slug", () => {
+  const entry = { id: "Iris/essays/01-async-fn-state-machines", data: {} };
 
-  const routes = noteRoutes([entry]);
+  const routes = pieceRoutes([entry]);
 
   assert.equal(routes.length, 1);
   assert.equal(routes[0].params.slug, "01-async-fn-state-machines");
   assert.equal(routes[0].props.entry, entry);
 });
 
-test("noteRoutes throws naming both entries when two ids collide on a slug", () => {
+test("pieceRoutes throws naming both entries when two ids collide on a slug", () => {
   const entries = [
-    { id: "Iris/notes-english/note", data: {} },
-    { id: "Agora/notes/note", data: {} },
+    { id: "Iris/essays/piece", data: {} },
+    { id: "Agora/journal/piece", data: {} },
   ];
 
   assert.throws(
-    () => noteRoutes(entries),
+    () => pieceRoutes(entries),
     (error) => {
       assert.ok(
-        error.message.includes("Iris/notes-english/note"),
+        error.message.includes("Iris/essays/piece"),
         `error should name the first entry: ${error.message}`
       );
       assert.ok(
-        error.message.includes("Agora/notes/note"),
+        error.message.includes("Agora/journal/piece"),
         `error should name the second entry: ${error.message}`
       );
       assert.ok(
-        error.message.includes("/writing/note/"),
+        error.message.includes("/writing/piece/"),
         `error should name the colliding URL: ${error.message}`
       );
       return true;
