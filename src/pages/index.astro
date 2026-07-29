@@ -1,13 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import NoteList from '../components/NoteList.astro';
-import { sortNotesNewestFirst } from '../lib/notes.mjs';
+import WritingList from '../components/WritingList.astro';
+import { sortNewestFirst } from '../lib/writing.mjs';
 import { base } from '../lib/site.mjs';
 
-// Only the three newest notes go on the homepage, so the section keeps a fixed
-// height as notes accumulate. The full list lives at /writing/.
-const posts = sortNotesNewestFirst(await getCollection('blog')).slice(0, 3);
+// Only the three newest pieces go on the homepage, so the section keeps a fixed
+// height as pieces accumulate. The full list lives at /writing/.
+const pieces = sortNewestFirst(await getCollection('writing')).slice(0, 3);
 ---
 
 <BaseLayout
@@ -73,14 +73,14 @@ const posts = sortNotesNewestFirst(await getCollection('blog')).slice(0, 3);
 
     <!-- WRITING -->
     <hr class="section-divider" />
-    <section id="writing" class="notes-section">
+    <section id="writing" class="writing-section">
       <div class="section-label reveal">Writing</div>
       <h2 class="reveal">Technical writing.</h2>
-      <p class="section-intro reveal">I write to understand things better. Notes, breakdowns, and opinions on the systems I'm building and studying.</p>
-      <div class="notes-archive reveal">
-        <a href={`${base}/writing/`} class="notes-archive-link">All notes <span aria-hidden="true">→</span></a>
+      <p class="section-intro reveal">I write to understand things better. Breakdowns and opinions on the systems I'm building and studying.</p>
+      <div class="writing-archive reveal">
+        <a href={`${base}/writing/`} class="writing-archive-link">All writing <span aria-hidden="true">→</span></a>
       </div>
-      <NoteList notes={posts} />
+      <WritingList pieces={pieces} />
     </section>
 
     <!-- ABOUT + CONTACT -->

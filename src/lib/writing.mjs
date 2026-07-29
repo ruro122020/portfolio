@@ -1,7 +1,7 @@
-// Note helpers used by the pages and components that render notes.
+// Writing helpers used by the pages and components that render pieces.
 //
-// These are deliberately separate from src/loaders/blog.mjs: that module's job
-// is reading notes off disk at build time and is imported only by
+// These are deliberately separate from src/loaders/writing.mjs: that module's
+// job is reading pieces off disk at build time and is imported only by
 // src/content.config.ts. This one is imported only by .astro files. Neither
 // calls into the other.
 //
@@ -22,24 +22,24 @@ export function entrySlug(id) {
 }
 
 /**
- * Order notes newest first, tie-breaking on id so the order is deterministic
+ * Order pieces newest first, tie-breaking on id so the order is deterministic
  * when dates match.
  * @param {{ id: string, data: { date: Date } }[]} entries collection entries
  * @returns {{ id: string, data: { date: Date } }[]} a new sorted array; the
  *   input is left untouched
  */
-export function sortNotesNewestFirst(entries) {
+export function sortNewestFirst(entries) {
   return [...entries].sort((a, b) => b.data.date - a.data.date || a.id.localeCompare(b.id));
 }
 
 /**
- * Format a note date for a list row, e.g. "Jul 12, 2026".
+ * Format a piece's date for a list row, e.g. "Jul 12, 2026".
  * YAML dates parse as UTC midnight; format in UTC too, or machines west of
  * Greenwich would print the day before the one written in the frontmatter.
  * @param {Date} date the entry's frontmatter date
  * @returns {string}
  */
-export function formatNoteDate(date) {
+export function formatPieceDate(date) {
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -49,19 +49,19 @@ export function formatNoteDate(date) {
 }
 
 /**
- * Build the getStaticPaths route list for the note pages.
- * Slugs must be unique because they are the whole URL. Two notes with the
+ * Build the getStaticPaths route list for the piece pages.
+ * Slugs must be unique because they are the whole URL. Two pieces with the
  * same filename in different folders collide; fail the build naming both.
  * @param {{ id: string }[]} entries collection entries
  * @returns {{ params: { slug: string }, props: { entry: object } }[]}
  */
-export function noteRoutes(entries) {
+export function pieceRoutes(entries) {
   const seen = new Map();
   return entries.map((entry) => {
     const slug = entrySlug(entry.id);
     if (seen.has(slug)) {
       throw new Error(
-        `duplicate note slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /writing/${slug}/`
+        `duplicate piece slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /writing/${slug}/`
       );
     }
     seen.set(slug, entry.id);
