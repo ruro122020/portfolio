@@ -3,7 +3,6 @@
 // Writing section and the /writing/ archive. Callers decide the order and how
 // many to pass in; this only renders what it is given.
 import { entrySlug, formatPieceDate } from '../lib/writing.mjs';
-import { base } from '../lib/site.mjs';
 
 interface Props {
   pieces: { id: string; data: { title: string; description: string; date: Date } }[];
@@ -14,7 +13,7 @@ const { pieces } = Astro.props;
 
 <div class="writing-list">
   {pieces.map((piece, i) => (
-    <a href={`${base}/writing/${entrySlug(piece.id)}/`} class="writing-item reveal" style={`transition-delay:${i * 0.07}s`}>
+    <a href={`/writing/${entrySlug(piece.id)}/`} class="writing-item reveal" style={`transition-delay:${i * 0.07}s`}>
       <div class="writing-date">{formatPieceDate(piece.data.date)}</div>
       <div>
         <div class="writing-title">{piece.data.title}</div>
