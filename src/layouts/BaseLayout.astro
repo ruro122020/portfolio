@@ -7,6 +7,11 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+// Astro.site is the domain root and Astro.url.pathname carries the trailing slash
+// the build produces, so this is the exact address the page is served at.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const previewCard = new URL('/og.png', Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -14,9 +19,30 @@ const { title, description } = Astro.props;
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+{/* global.css imports the fonts, so the browser only learns these origins exist
+    after it has parsed the stylesheet. crossorigin is required on the gstatic
+    one: fonts are fetched in CORS mode, and without it the browser opens a
+    connection it then discards. */}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
 <title>{title}</title>
 <meta name="description" content={description} />
-<link rel="preconnect" href="https://github.com" />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="kmalloc" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={previewCard} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="kmalloc.dev. Ruth Rojas, systems engineer and builder." />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 </head>
 <body>
   <div class="cursor" id="cursor"></div>
