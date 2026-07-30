@@ -12,6 +12,18 @@ const { title, description } = Astro.props;
 // the build produces, so this is the exact address the page is served at.
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const previewCard = new URL('/og.png', Astro.site);
+
+// The desktop nav and the mobile drawer show the same links. Defining them once
+// means they cannot drift apart. id is both the homepage anchor and the section
+// main.js scrolls to, so the two always match.
+const navItems = [
+  { id: 'projects', label: 'Projects' },
+  { id: 'resume', label: 'Resume' },
+  { id: 'learning', label: 'Learning' },
+  { id: 'writing', label: 'Writing' },
+  { id: 'about', label: 'About' },
+  { id: 'contact', label: 'Contact' },
+];
 ---
 
 <!DOCTYPE html>
@@ -52,22 +64,16 @@ const previewCard = new URL('/og.png', Astro.site);
   <nav>
     <a href="/#hero" class="nav-logo" data-scroll="hero">Ruth<em style="font-style:italic;color:var(--accent)">.</em></a>
     <ul class="nav-links">
-      <li><a href="/#projects" data-scroll="projects">Projects</a></li>
-      <li><a href="/#resume" data-scroll="resume">Resume</a></li>
-      <li><a href="/#learning" data-scroll="learning">Learning</a></li>
-      <li><a href="/#writing" data-scroll="writing">Writing</a></li>
-      <li><a href="/#about" data-scroll="about">About</a></li>
-      <li><a href="/#contact" data-scroll="contact">Contact</a></li>
+      {navItems.map(({ id, label }) => (
+        <li><a href={`/#${id}`} data-scroll={id}>{label}</a></li>
+      ))}
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </nav>
   <ul class="nav-drawer" id="navDrawer">
-    <li><a href="/#projects" data-scroll="projects">Projects</a></li>
-    <li><a href="/#resume" data-scroll="resume">Resume</a></li>
-    <li><a href="/#learning" data-scroll="learning">Learning</a></li>
-    <li><a href="/#writing" data-scroll="writing">Writing</a></li>
-    <li><a href="/#about" data-scroll="about">About</a></li>
-    <li><a href="/#contact" data-scroll="contact">Contact</a></li>
+    {navItems.map(({ id, label }) => (
+      <li><a href={`/#${id}`} data-scroll={id}>{label}</a></li>
+    ))}
   </ul>
 
   <main>
