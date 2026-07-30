@@ -79,7 +79,7 @@ npm run pull-writing
 npm run dev      # or: npm run build && npm run preview
 ```
 
-A published piece gets its own page at `/portfolio/writing/<slug>` (the site is served under the `/portfolio` base path), where the slug is the piece's filename without `.md`. The Writing section on the homepage lists the three newest pieces; the full archive is at `/portfolio/writing/`.
+A published piece gets its own page at `/writing/<slug>`, where the slug is the piece's filename without `.md`. The Writing section on the homepage lists the three newest pieces; the full archive is at `/writing/`.
 
 ### 4. Merge to main
 
