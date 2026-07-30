@@ -68,7 +68,7 @@ const SKILLS = {
   "Languages": ["Go (Golang)", "Python", "SQL"],
   "Backend & Networking": ["HTTP/3", "QUIC", "HTTP-based RPC", "REST APIs", "PostgreSQL", "Web Servers"],
   "Infrastructure & DevOps": ["Docker", "systemd services", "Git", "Bitbucket", "Jira"],
-  "Currently Learning": ["RTOS", "Embedded Systems", "Bare-Metal C"],
+  "Currently Learning": ["Rust", "RTOS", "Embedded Systems", "Bare-Metal C"],
 };
 
 /* ── HELPERS ── */

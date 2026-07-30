@@ -1,24 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { entrySlug } from '../../loaders/blog.mjs';
+import { pieceRoutes } from '../../lib/writing.mjs';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-
-  // Slugs must be unique because they are the whole URL. Two notes with the
-  // same filename in different folders collide; fail the build naming both.
-  const seen = new Map();
-  return posts.map((entry) => {
-    const slug = entrySlug(entry.id);
-    if (seen.has(slug)) {
-      throw new Error(
-        `duplicate blog slug "${slug}": entries "${seen.get(slug)}" and "${entry.id}" both map to /blog/${slug}/`
-      );
-    }
-    seen.set(slug, entry.id);
-    return { params: { slug }, props: { entry } };
-  });
+  return pieceRoutes(await getCollection('writing'));
 }
 
 const { entry } = Astro.props;

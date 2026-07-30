@@ -5,12 +5,12 @@ import path from "node:path";
 import os from "node:os";
 import matter from "gray-matter";
 
-import { blogSchema, hasFrontmatter, blogLoader, entrySlug } from "./blog.mjs";
+import { writingSchema, hasFrontmatter, writingLoader } from "./writing.mjs";
 
-// A temp directory standing in for src/content/blog/, so tests never touch
-// the real pulled notes.
+// A temp directory standing in for src/content/writing/, so tests never touch
+// the real pulled pieces.
 function makeContentDir(files) {
-  const dir = mkdtempSync(path.join(os.tmpdir(), "blog-loader-"));
+  const dir = mkdtempSync(path.join(os.tmpdir(), "writing-loader-"));
   for (const [relPath, content] of Object.entries(files)) {
     const filePath = path.join(dir, relPath);
     mkdirSync(path.dirname(filePath), { recursive: true });
@@ -43,7 +43,7 @@ function makeContext() {
         keys: () => [...backing.keys()],
       },
       parseData: async ({ id, data }) => {
-        const result = blogSchema.safeParse(data);
+        const result = writingSchema.safeParse(data);
         if (!result.success) {
           // Astro's own error lists every offending field; mirror that.
           const details = result.error.issues
@@ -67,11 +67,11 @@ function makeContext() {
   };
 }
 
-const VALID_NOTE = [
+const VALID_PIECE = [
   "---",
-  "title: A valid note",
+  "title: A valid piece",
   "date: 2026-06-01",
-  "description: A note that should publish",
+  "description: A piece that should publish",
   "draft: false",
   "---",
   "",
@@ -93,7 +93,7 @@ test("hasFrontmatter returns true with windows line endings", () => {
   assert.equal(hasFrontmatter("---\r\ntitle: x\r\n---\r\nbody\r\n"), true);
 });
 
-test("hasFrontmatter returns false for a note with no fence", () => {
+test("hasFrontmatter returns false for a piece with no fence", () => {
   assert.equal(hasFrontmatter("# Study Log\n\nJust markdown.\n"), false);
 });
 
@@ -102,14 +102,14 @@ test("hasFrontmatter returns false when a fence appears only later in the file",
 });
 
 // ---------------------------------------------------------------------------
-// blogSchema: strict shape, draft is an explicit written choice
+// writingSchema: strict shape, draft is an explicit written choice
 // ---------------------------------------------------------------------------
 
-test("schema accepts a valid publishable note", () => {
-  const result = blogSchema.safeParse({
-    title: "A valid note",
+test("schema accepts a valid publishable piece", () => {
+  const result = writingSchema.safeParse({
+    title: "A valid piece",
     date: new Date("2026-06-01"),
-    description: "A note that should publish",
+    description: "A piece that should publish",
     draft: false,
   });
   assert.equal(result.success, true);
@@ -118,7 +118,7 @@ test("schema accepts a valid publishable note", () => {
 });
 
 test("schema rejects a missing title", () => {
-  const result = blogSchema.safeParse({
+  const result = writingSchema.safeParse({
     date: new Date("2026-06-01"),
     description: "x",
     draft: false,
@@ -128,7 +128,7 @@ test("schema rejects a missing title", () => {
 });
 
 test("schema rejects a malformed date", () => {
-  const result = blogSchema.safeParse({
+  const result = writingSchema.safeParse({
     title: "x",
     date: "not-a-date",
     description: "x",
@@ -139,7 +139,7 @@ test("schema rejects a malformed date", () => {
 });
 
 test("schema rejects a missing draft: publishing is never implicit", () => {
-  const result = blogSchema.safeParse({
+  const result = writingSchema.safeParse({
     title: "x",
     date: new Date("2026-06-01"),
     description: "x",
@@ -149,7 +149,7 @@ test("schema rejects a missing draft: publishing is never implicit", () => {
 });
 
 test("schema rejects a non-boolean draft", () => {
-  const result = blogSchema.safeParse({
+  const result = writingSchema.safeParse({
     title: "x",
     date: new Date("2026-06-01"),
     description: "x",
@@ -160,7 +160,7 @@ test("schema rejects a non-boolean draft", () => {
 });
 
 test("schema rejects an unknown key even when every required field is valid", () => {
-  const result = blogSchema.safeParse({
+  const result = writingSchema.safeParse({
     title: "x",
     date: new Date("2026-06-01"),
     description: "x",
@@ -181,7 +181,7 @@ test("date coercion accepts quoted and unquoted YAML dates", () => {
   assert.equal(typeof quoted, "string");
 
   for (const date of [unquoted, quoted]) {
-    const result = blogSchema.safeParse({
+    const result = writingSchema.safeParse({
       title: "x",
       date,
       description: "x",
@@ -193,84 +193,65 @@ test("date coercion accepts quoted and unquoted YAML dates", () => {
 });
 
 // ---------------------------------------------------------------------------
-// entrySlug: the URL segment is the last piece of the entry id
+// writingLoader().load: skip, validate, store
 // ---------------------------------------------------------------------------
 
-test("entrySlug returns the last segment of a nested id", () => {
-  assert.equal(
-    entrySlug("Iris/notes-english/01-async-fn-state-machines"),
-    "01-async-fn-state-machines"
-  );
-});
-
-test("entrySlug returns a flat id unchanged", () => {
-  assert.equal(entrySlug("note"), "note");
-});
-
-test("two different ids can produce the same slug: collisions are the page's job to reject", () => {
-  assert.equal(entrySlug("Iris/notes-english/note"), entrySlug("Other/deep/path/note"));
-});
-
-// ---------------------------------------------------------------------------
-// blogLoader().load: skip, validate, store
-// ---------------------------------------------------------------------------
-
-test("a note without a frontmatter fence is skipped silently", async (t) => {
-  const dir = makeContentDir({ "private-note.md": "# Study Log\n\nNo fence here.\n" });
+test("a piece without a frontmatter fence is skipped silently", async (t) => {
+  const dir = makeContentDir({ "private-piece.md": "# Study Log\n\nNo fence here.\n" });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, warnings, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
   assert.equal(backing.size, 0);
   assert.deepEqual(warnings, []);
 });
 
-test("a valid draft false note is stored with data, body, rendered html, and filePath", async (t) => {
-  const dir = makeContentDir({ "note.md": VALID_NOTE });
+test("a valid draft false piece is stored with data, body, rendered html, and filePath", async (t) => {
+  const dir = makeContentDir({ "piece.md": VALID_PIECE });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
   assert.equal(backing.size, 1);
-  const entry = backing.get("note");
-  assert.equal(entry.data.title, "A valid note");
+  const entry = backing.get("piece");
+  assert.equal(entry.data.title, "A valid piece");
   assert.equal(entry.data.draft, false);
   assert.ok(entry.data.date instanceof Date);
   assert.ok(entry.body.includes("# Heading"), "body is the markdown content");
   assert.ok(!entry.body.includes("title:"), "body excludes the frontmatter");
   assert.ok(entry.rendered.html.includes("# Heading"), "rendered comes from renderMarkdown");
-  assert.ok(entry.filePath.endsWith("note.md"));
+  assert.ok(entry.filePath.endsWith("piece.md"));
 });
 
 test("entry id is the path relative to the content dir with .md stripped", async (t) => {
   const dir = makeContentDir({
-    "Iris/notes-english/01-async-fn-state-machines.md": VALID_NOTE,
+    "Iris/essays/01-async-fn-state-machines.md": VALID_PIECE,
   });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
-  assert.deepEqual([...backing.keys()], ["Iris/notes-english/01-async-fn-state-machines"]);
+  assert.deepEqual([...backing.keys()], ["Iris/essays/01-async-fn-state-machines"]);
 });
 
-test("a valid draft true note is not stored", async (t) => {
+test("a valid draft true piece is not stored", async (t) => {
   const dir = makeContentDir({
-    "wip.md": VALID_NOTE.replace("draft: false", "draft: true"),
+    "wip.md": VALID_PIECE.replace("draft: false", "draft: true"),
   });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
   assert.equal(backing.size, 0);
 });
 
-test("a draft true note with a malformed field still fails the build", async (t) => {
+test("a draft true piece with a malformed field still fails the build", async (t) => {
   const dir = makeContentDir({
-    "wip.md": VALID_NOTE.replace("draft: false", "draft: true").replace(
+    "wip.md": VALID_PIECE.replace("draft: false", "draft: true").replace(
       "date: 2026-06-01",
       "date: not-a-date"
     ),
@@ -278,19 +259,19 @@ test("a draft true note with a malformed field still fails the build", async (t)
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { context } = makeContext();
 
-  await assert.rejects(blogLoader({ contentDir: dir }).load(context), /date/);
+  await assert.rejects(writingLoader({ contentDir: dir }).load(context), /date/);
 });
 
 test("a validation error names both the file and the offending field", async (t) => {
   const dir = makeContentDir({
-    "Iris/notes-english/typo.md": VALID_NOTE.replace("draft: false", "darft: true"),
+    "Iris/essays/typo.md": VALID_PIECE.replace("draft: false", "darft: true"),
   });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { context } = makeContext();
 
-  await assert.rejects(blogLoader({ contentDir: dir }).load(context), (error) => {
+  await assert.rejects(writingLoader({ contentDir: dir }).load(context), (error) => {
     assert.ok(
-      error.message.includes("Iris/notes-english/typo.md"),
+      error.message.includes("Iris/essays/typo.md"),
       `error should name the file: ${error.message}`
     );
     assert.ok(error.message.includes("darft"), `error should name the field: ${error.message}`);
@@ -305,57 +286,57 @@ test("broken YAML fails naming the file", async (t) => {
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { context } = makeContext();
 
-  await assert.rejects(blogLoader({ contentDir: dir }).load(context), (error) => {
+  await assert.rejects(writingLoader({ contentDir: dir }).load(context), (error) => {
     assert.ok(error.message.includes("broken.md"), `error should name the file: ${error.message}`);
     return true;
   });
 });
 
-test("a missing content dir warns to run pull-blog and stores zero entries", async (t) => {
-  const dir = path.join(mkdtempSync(path.join(os.tmpdir(), "blog-loader-")), "does-not-exist");
+test("a missing content dir warns to run pull-writing and stores zero entries", async (t) => {
+  const dir = path.join(mkdtempSync(path.join(os.tmpdir(), "writing-loader-")), "does-not-exist");
   t.after(() => rmSync(path.dirname(dir), { recursive: true, force: true }));
   const { backing, warnings, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
   assert.equal(backing.size, 0);
   assert.equal(warnings.length, 1);
-  assert.ok(warnings[0].includes("npm run pull-blog"), `warning should say how to fix: ${warnings[0]}`);
+  assert.ok(warnings[0].includes("npm run pull-writing"), `warning should say how to fix: ${warnings[0]}`);
 });
 
-test("an empty content dir warns to run pull-blog and stores zero entries", async (t) => {
+test("an empty content dir warns to run pull-writing and stores zero entries", async (t) => {
   const dir = makeContentDir({});
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, warnings, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
   assert.equal(backing.size, 0);
   assert.equal(warnings.length, 1);
-  assert.ok(warnings[0].includes("npm run pull-blog"));
+  assert.ok(warnings[0].includes("npm run pull-writing"));
 });
 
 test("stale entries from a previous load do not linger", async (t) => {
-  const dir = makeContentDir({ "note.md": VALID_NOTE });
+  const dir = makeContentDir({ "piece.md": VALID_PIECE });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, context } = makeContext();
-  backing.set("removed-note", { id: "removed-note", data: {} });
+  backing.set("removed-piece", { id: "removed-piece", data: {} });
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
-  assert.deepEqual([...backing.keys()], ["note"]);
+  assert.deepEqual([...backing.keys()], ["piece"]);
 });
 
 test("non-markdown files in the content dir are ignored", async (t) => {
   const dir = makeContentDir({
-    "note.md": VALID_NOTE,
-    "notes.txt": "---\nnot: markdown\n---\n",
+    "piece.md": VALID_PIECE,
+    "piece.txt": "---\nnot: markdown\n---\n",
     "image.png": "binary-ish",
   });
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const { backing, context } = makeContext();
 
-  await blogLoader({ contentDir: dir }).load(context);
+  await writingLoader({ contentDir: dir }).load(context);
 
-  assert.deepEqual([...backing.keys()], ["note"]);
+  assert.deepEqual([...backing.keys()], ["piece"]);
 });

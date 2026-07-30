@@ -1,5 +1,5 @@
-// Pulls blog markdown from the repos listed in blog-sources.json into
-// src/content/blog/. Run via: npm run pull-blog
+// Pulls writing markdown from the repos listed in writing-sources.json into
+// src/content/writing/. Run via: npm run pull-writing
 //
 // Each config entry is { "repo": "owner/name" | "<url>", "path": "dir/in/repo" }.
 // The destination is wiped on every run, so the config is the single source
@@ -11,7 +11,7 @@ import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const CONFIG_NAME = "blog-sources.json";
+const CONFIG_NAME = "writing-sources.json";
 
 // owner/name shorthand expands to a GitHub URL; anything with :// is used as is.
 export function resolveRepoUrl(repo) {
@@ -19,7 +19,7 @@ export function resolveRepoUrl(repo) {
 }
 
 // The repo's basename (e.g. "Iris" for "ruro122020/Iris") names the
-// destination folder under src/content/blog/.
+// destination folder under src/content/writing/.
 export function repoName(repo) {
   return path.posix.basename(repo.replace(/\/+$/, "")).replace(/\.git$/, "");
 }
@@ -75,9 +75,9 @@ function cloneShallow(url, targetDir, label) {
   }
 }
 
-export function pullBlog(projectRoot) {
+export function pullWriting(projectRoot) {
   const sources = loadSources(projectRoot);
-  const destRoot = path.join(projectRoot, "src", "content", "blog");
+  const destRoot = path.join(projectRoot, "src", "content", "writing");
 
   // Wipe then re-pull, so removed config entries disappear from the build.
   rmSync(destRoot, { recursive: true, force: true });
@@ -85,7 +85,7 @@ export function pullBlog(projectRoot) {
 
   for (const entry of sources) {
     const label = `${entry.repo} (path: ${entry.path})`;
-    const tempDir = mkdtempSync(path.join(os.tmpdir(), "pull-blog-"));
+    const tempDir = mkdtempSync(path.join(os.tmpdir(), "pull-writing-"));
     try {
       cloneShallow(resolveRepoUrl(entry.repo), tempDir, label);
       const sourceDir = path.join(tempDir, entry.path);
@@ -100,7 +100,7 @@ export function pullBlog(projectRoot) {
         recursive: true,
         filter: (src) => !lstatSync(src).isSymbolicLink(),
       });
-      console.log(`pull-blog: ${label} -> src/content/blog/${repoName(entry.repo)}/${entry.path}/`);
+      console.log(`pull-writing: ${label} -> src/content/writing/${repoName(entry.repo)}/${entry.path}/`);
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
@@ -110,9 +110,9 @@ export function pullBlog(projectRoot) {
 // Guarded so the test file can import the functions without triggering a run.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    pullBlog(process.cwd());
+    pullWriting(process.cwd());
   } catch (error) {
-    console.error(`pull-blog: ${error.message}`);
+    console.error(`pull-writing: ${error.message}`);
     process.exit(1);
   }
 }

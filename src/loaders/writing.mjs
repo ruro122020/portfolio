@@ -1,8 +1,8 @@
-// Custom Astro content-layer loader for src/content/blog/.
+// Custom Astro content-layer loader for src/content/writing/.
 //
-// Frontmatter is the publish switch: a note with no frontmatter fence is
-// private and skipped silently; a note with frontmatter must validate
-// against the strict schema below, and only draft: false notes are stored.
+// Frontmatter is the publish switch: a piece with no frontmatter fence is
+// private and skipped silently; a piece with frontmatter must validate
+// against the strict schema below, and only draft: false pieces are stored.
 //
 // Plain .mjs with JSDoc so the unit tests can run under node --test
 // without any TypeScript machinery.
@@ -16,7 +16,7 @@ import { z } from "astro/zod";
 // Strict: an unknown or misspelled key (e.g. "darft") fails the build
 // instead of silently publishing. "draft" is required, never defaulted,
 // because publishing must be an explicit written choice.
-export const blogSchema = z
+export const writingSchema = z
   .object({
     title: z.string().min(1, "title must be a non-empty string"),
     date: z.coerce.date(),
@@ -26,26 +26,13 @@ export const blogSchema = z
   .strict();
 
 /**
- * A note is publishable-candidate material only when the file opens with a
+ * A piece is publishable-candidate material only when the file opens with a
  * frontmatter fence: three dashes as the very first line.
  * @param {string} text raw file contents
  * @returns {boolean}
  */
 export function hasFrontmatter(text) {
   return /^---\r?\n/.test(text);
-}
-
-/**
- * Derive the URL slug for an entry: the last "/"-separated segment of its id
- * ("Iris/notes-english/01-async-fn-state-machines" -> "01-async-fn-state-machines").
- * Different ids can share a slug; the page that builds the routes must reject
- * such collisions.
- * @param {string} id entry id as stored by the loader
- * @returns {string}
- */
-export function entrySlug(id) {
-  const segments = id.split("/");
-  return segments[segments.length - 1];
 }
 
 /**
@@ -67,17 +54,17 @@ function walkMarkdownFiles(dir) {
 }
 
 /**
- * Content-layer loader for the blog collection.
+ * Content-layer loader for the writing collection.
  * @param {{ contentDir?: string }} [options] contentDir overrides the
- *   notes directory (absolute path), used by tests; defaults to
- *   src/content/blog/ under the current working directory.
+ *   writing directory (absolute path), used by tests; defaults to
+ *   src/content/writing/ under the current working directory.
  * @returns {import("astro/loaders").Loader}
  */
-export function blogLoader(options = {}) {
-  const contentDir = options.contentDir ?? path.join(process.cwd(), "src", "content", "blog");
+export function writingLoader(options = {}) {
+  const contentDir = options.contentDir ?? path.join(process.cwd(), "src", "content", "writing");
 
   return {
-    name: "blog-loader",
+    name: "writing-loader",
     load: async (context) => {
       const { store, parseData, renderMarkdown, logger } = context;
 
@@ -98,7 +85,7 @@ export function blogLoader(options = {}) {
 
       if (files.length === 0) {
         logger.warn(
-          `no markdown notes found in ${contentDir}: run "npm run pull-blog" to sync them`
+          `no markdown pieces found in ${contentDir}: run "npm run pull-writing" to sync them`
         );
         return;
       }
@@ -107,7 +94,7 @@ export function blogLoader(options = {}) {
         const relativePath = path.relative(contentDir, filePath);
         const raw = readFileSync(filePath, "utf8");
 
-        // No frontmatter fence: the note is private. Skip silently.
+        // No frontmatter fence: the piece is private. Skip silently.
         if (!hasFrontmatter(raw)) {
           continue;
         }

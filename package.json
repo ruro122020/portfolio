@@ -6,10 +6,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "pull-blog": "node scripts/pull-blog.mjs",
-    "test": "node --test scripts/*.test.mjs src/loaders/*.test.mjs"
+    "pull-writing": "node scripts/pull-writing.mjs",
+    "test": "node --test \"scripts/**/*.test.mjs\" \"src/**/*.test.mjs\""
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^5.0.0",
     "gray-matter": "^4.0.3"
   }

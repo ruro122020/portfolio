@@ -19,9 +19,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      # Blog notes live in separate repos (blog-sources.json); dist/ is built
+      # Writing lives in separate repos (writing-sources.json); dist/ is built
       # from source here and uploaded as an artifact, never committed.
-      - run: npm run pull-blog
+      - run: npm run pull-writing
       - run: npm run build
       - if: inputs.upload-pages-artifact
         uses: actions/configure-pages@v5
