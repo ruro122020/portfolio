@@ -32,7 +32,7 @@ const SIDE_PROJECTS = [
     desc: "A from-scratch minimal scheduler to understand how real-time operating systems actually work. Manages two tasks that flash individual LEDs with independent timing constraints, a small scope that forces real decisions about preemption, task state, and hardware timing.",
     context: "Learning: Real-time operating systems & embedded",
     tags: ["C", "RTOS", "Embedded", "Bare Metal"],
-    link: "https://github.com/ruro122020/Custom-RTOS",
+    link: "https://github.com/ruro122020/RTOS",
     linkLabel: "View on GitHub",
   },
 ];
