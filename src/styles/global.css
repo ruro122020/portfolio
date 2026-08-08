@@ -211,12 +211,9 @@
 
     /* ── HERO ── */
     #hero {
-      min-height: calc(100vh - 80px);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 4rem;
-      padding-top: 6rem;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+      text-align: center;
     }
     .hero-text h1 {
       font-family: var(--serif);
@@ -233,10 +230,15 @@
     .hero-tagline {
       font-size: 1rem;
       color: var(--ink-muted);
-      max-width: 420px;
       line-height: 1.75;
       margin-bottom: 2.5rem;
     }
+    .hero-tagline a {
+      color: var(--accent);
+      text-decoration: underline;
+      transition: opacity 0.2s;
+    }
+    .hero-tagline a:hover { opacity: 0.7; }
     .hero-ctas {
       display: flex; gap: 1rem; flex-wrap: wrap;
     }
