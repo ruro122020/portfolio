@@ -46,24 +46,6 @@ const LEARNING = [
   },
 ];
 
-const EXPERIENCE = [
-  {
-    role: "Junior Validation Automation Engineer",
-    company: "AtlasIED",
-    period: "Feb 2025 — Present",
-    summary: "Build the platform that runs hardware validation for up to 30 remote test stations, replacing a slow, manual process and freeing several engineer-days per week across the team.",
-    bullets: [
-      "Design and build the backend services for a distributed test-automation platform in Go, using HTTP/3 over QUIC with TLS encryption to deliver test software to up to 30 remote test machines and run it reliably.",
-      "Build a streaming file-transfer pipeline that delivers multi-gigabyte test packages piece by piece, eliminating the memory limits and transfer failures of the previous system.",
-      "Engineer the platform with security throughout, adding protections against malicious archives (path-traversal, decompression bombs, unsafe links), enforcing encrypted connections, and sanitizing error responses so internal details are never exposed externally.",
-      "Implement OS-aware execution so the platform runs and correctly interprets failures across Windows, macOS, and Linux, mapping each platform's error codes to consistent categories.",
-      "Develop fault-tolerant download and dispatch logic, including request coalescing that fetches duplicate concurrent requests only once and caching that skips redundant downloads, saving time and bandwidth.",
-      "Build structured logging and per-request tracing that follows each request end to end, turning cryptic failures into clear diagnostics for operators.",
-      "Replace a slow, manual validation workflow with automation, reducing tester fatigue, surfacing defects earlier, and freeing several engineer-days per week across the team.",
-    ],
-  },
-];
-
 const SKILLS = {
   "Languages": ["Go (Golang)", "Python", "SQL"],
   "Backend & Networking": ["HTTP/3", "QUIC", "HTTP-based RPC", "REST APIs", "PostgreSQL", "Web Servers"],
@@ -113,27 +95,6 @@ function projectCardHTML(p, i, bordered) {
 
 renderInto("projectsGrid", PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join(""));
 renderInto("sideProjectsGrid", SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join(""));
-
-/* ── RENDER: EXPERIENCE ── */
-renderInto("experienceList", EXPERIENCE.map((job) => {
-  const bullets = job.bullets.map((b) => `
-    <li style="display:grid;grid-template-columns:auto 1fr;gap:0.85rem;font-size:0.9rem;line-height:1.6;color:var(--ink)">
-      <span style="color:var(--accent);font-family:var(--mono);font-size:0.8rem;padding-top:0.1rem">—</span>
-      <span>${esc(b)}</span>
-    </li>`).join("");
-  return `
-    <div class="reveal" style="padding:2.5rem 0;border-bottom:1px solid var(--rule)">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:baseline;margin-bottom:0.75rem">
-        <div>
-          <div style="font-family:var(--serif);font-size:1.4rem;font-weight:400;letter-spacing:-0.01em">${esc(job.role)}</div>
-          <div style="font-family:var(--mono);font-size:0.75rem;letter-spacing:0.06em;color:var(--accent);margin-top:0.25rem">${esc(job.company)}</div>
-        </div>
-        <div style="font-family:var(--mono);font-size:0.7rem;letter-spacing:0.06em;color:var(--ink-muted);text-transform:uppercase">${esc(job.period)}</div>
-      </div>
-      <p style="font-size:0.9rem;color:var(--ink-muted);font-style:italic;margin-bottom:1.5rem;max-width:640px">${esc(job.summary)}</p>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.85rem">${bullets}</ul>
-    </div>`;
-}).join(""));
 
 /* ── RENDER: SKILLS ── */
 renderInto("skillsGrid",
