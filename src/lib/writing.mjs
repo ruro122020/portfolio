@@ -24,9 +24,9 @@ export function entrySlug(id) {
 /**
  * Order pieces newest first, tie-breaking on id so the order is deterministic
  * when dates match.
- * @param {{ id: string, data: { date: Date } }[]} entries collection entries
- * @returns {{ id: string, data: { date: Date } }[]} a new sorted array; the
- *   input is left untouched
+ * @template {{ id: string, data: { date: Date } }} T
+ * @param {T[]} entries collection entries
+ * @returns {T[]} a new sorted array; the input is left untouched
  */
 export function sortNewestFirst(entries) {
   return [...entries].sort((a, b) => b.data.date - a.data.date || a.id.localeCompare(b.id));
@@ -52,8 +52,9 @@ export function formatPieceDate(date) {
  * Build the getStaticPaths route list for the piece pages.
  * Slugs must be unique because they are the whole URL. Two pieces with the
  * same filename in different folders collide; fail the build naming both.
- * @param {{ id: string }[]} entries collection entries
- * @returns {{ params: { slug: string }, props: { entry: object } }[]}
+ * @template {{ id: string }} T
+ * @param {T[]} entries collection entries
+ * @returns {{ params: { slug: string }, props: { entry: T } }[]}
  */
 export function pieceRoutes(entries) {
   const seen = new Map();
