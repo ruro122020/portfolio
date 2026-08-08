@@ -46,13 +46,6 @@ const LEARNING = [
   },
 ];
 
-const SKILLS = {
-  "Languages": ["Go (Golang)", "Python", "SQL"],
-  "Backend & Networking": ["HTTP/3", "QUIC", "HTTP-based RPC", "REST APIs", "PostgreSQL", "Web Servers"],
-  "Infrastructure & DevOps": ["Docker", "systemd services", "Git", "Bitbucket", "Jira"],
-  "Currently Learning": ["Rust", "RTOS", "Embedded Systems", "Bare-Metal C"],
-};
-
 /* ── HELPERS ── */
 // Escape text inserted into HTML to avoid breaking markup
 function esc(str) {
@@ -95,14 +88,6 @@ function projectCardHTML(p, i, bordered) {
 
 renderInto("projectsGrid", PROJECTS.map((p, i) => projectCardHTML(p, i, false)).join(""));
 renderInto("sideProjectsGrid", SIDE_PROJECTS.map((p, i) => projectCardHTML(p, i, true)).join(""));
-
-/* ── RENDER: SKILLS ── */
-renderInto("skillsGrid",
-  Object.entries(SKILLS).map(([cat, items]) => `
-    <div>
-      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.85rem">${esc(cat)}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:0.4rem">${items.map((s) => `<span class="tag">${esc(s)}</span>`).join("")}</div>
-    </div>`).join(""));
 
 /* ── RENDER: LEARNING ── */
 renderInto("learningList", LEARNING.map((item, i) => `
