@@ -14,15 +14,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const previewCard = new URL('/og.png', Astro.site);
 
 // The desktop nav and the mobile drawer show the same links. Defining them once
-// means they cannot drift apart. id is both the homepage anchor and the section
-// main.js scrolls to, so the two always match.
+// means they cannot drift apart.
 const navItems = [
-  { id: 'projects', label: 'Projects' },
-  { id: 'resume', label: 'Resume' },
-  { id: 'learning', label: 'Learning' },
-  { id: 'writing', label: 'Writing' },
-  { id: 'about', label: 'About' },
-  { id: 'contact', label: 'Contact' },
+  { href: 'https://github.com/ruro122020', label: 'GitHub' },
 ];
 ---
 
@@ -64,26 +58,21 @@ const navItems = [
   <nav>
     <a href="/#hero" class="nav-logo" data-scroll="hero">Ruth<em style="font-style:italic;color:var(--accent)">.</em></a>
     <ul class="nav-links">
-      {navItems.map(({ id, label }) => (
-        <li><a href={`/#${id}`} data-scroll={id}>{label}</a></li>
+      {navItems.map(({ href, label }) => (
+        <li><a href={href} target="_blank" rel="noopener noreferrer">{label}</a></li>
       ))}
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </nav>
   <ul class="nav-drawer" id="navDrawer">
-    {navItems.map(({ id, label }) => (
-      <li><a href={`/#${id}`} data-scroll={id}>{label}</a></li>
+    {navItems.map(({ href, label }) => (
+      <li><a href={href} target="_blank" rel="noopener noreferrer">{label}</a></li>
     ))}
   </ul>
 
   <main>
     <slot />
   </main>
-
-  <footer>
-    <span class="footer-copy">&copy; 2025 Ruth — Built with intention.</span>
-    <a href="/#hero" class="footer-back" data-scroll="hero">&uarr; Back to top</a>
-  </footer>
 
   <script is:inline src="/main.js"></script>
 </body>

@@ -1,6 +1,6 @@
 # Ruth Rojas: Portfolio
 
-A personal portfolio site.
+A personal space.
 
 ## Running locally
 
@@ -18,17 +18,6 @@ To preview the exact static output that would go live:
 npm run build
 npm run preview
 ```
-
-## Editing content
-
-Everything except writing lives in the data objects at the top of `public/main.js`:
-
-- `PROJECTS` / `SIDE_PROJECTS`: project cards
-- `EXPERIENCE`: work history
-- `SKILLS`: skills grid
-- `LEARNING`: current learning log
-
-Update those objects and the page re-renders on reload. No other files need to change.
 
 ## Publishing a piece
 
