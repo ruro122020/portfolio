@@ -2,11 +2,33 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WritingList from '../components/WritingList.astro';
+import ProjectList from '../components/ProjectList.astro';
 import { sortNewestFirst } from '../lib/writing.mjs';
 
 // Only the three newest pieces go on the homepage, so the section keeps a fixed
 // height as pieces accumulate. The full list lives at /writing/.
 const pieces = sortNewestFirst(await getCollection('writing')).slice(0, 3);
+
+const projects = [
+  {
+    name: 'Agora',
+    description: 'A web server written in Rust using only the standard library.',
+    tags: ['Rust'],
+    href: 'https://github.com/ruro122020/Agora',
+  },
+  {
+    name: 'PostgreSQL driver benchmark',
+    description: 'A timing comparison of the asyncpg and psycopg2 PostgreSQL drivers under Django.',
+    tags: ['Python', 'PostgreSQL', 'Django'],
+    href: 'https://github.com/ruro122020/pg-driver-performance',
+  },
+  {
+    name: 'AnimalsMD',
+    description: 'A Flask REST API that matches a pet\'s symptoms to possible illnesses and returns treatments and products.',
+    tags: ['Python', 'Flask', 'PostgreSQL'],
+    href: 'https://github.com/ruro122020/animalsmd-backend-2.0',
+  },
+];
 ---
 
 <BaseLayout
@@ -24,9 +46,17 @@ const pieces = sortNewestFirst(await getCollection('writing')).slice(0, 3);
 
     <!-- WRITING -->
     <section id="writing" class="writing-section" style="padding-top:0;padding-bottom:5rem">
-      <div class="writing-archive reveal">
-        <a href="/writing/" class="writing-archive-link">All writing <span aria-hidden="true">→</span></a>
+      <div class="home-columns">
+        <div>
+          <div class="writing-archive reveal">
+            <a href="/writing/" class="writing-archive-link">All writing <span aria-hidden="true">→</span></a>
+          </div>
+          <WritingList pieces={pieces} />
+        </div>
+        <div class="home-projects">
+          <div class="section-label reveal">Projects</div>
+          <ProjectList projects={projects} />
+        </div>
       </div>
-      <WritingList pieces={pieces} />
     </section>
 </BaseLayout>

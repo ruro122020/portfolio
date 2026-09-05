@@ -557,7 +557,8 @@
       transition: all 0.2s;
     }
     .writing-item:first-child { border-top: 1px solid var(--rule); }
-    .writing-item:hover .writing-title { color: var(--accent); }
+    .writing-item:hover .writing-title,
+    .project-item:hover .project-title { color: var(--accent); }
     .writing-date {
       font-family: var(--mono);
       font-size: 0.65rem;
@@ -565,7 +566,8 @@
       color: var(--ink-muted);
       padding-top: 0.15rem;
     }
-    .writing-title {
+    .writing-title,
+    .project-title {
       font-family: var(--serif);
       font-size: 1.2rem;
       font-weight: 400;
@@ -573,20 +575,53 @@
       transition: color 0.2s;
       margin-bottom: 0.25rem;
     }
-    .writing-excerpt {
+    .writing-excerpt,
+    .project-excerpt {
       font-size: 0.82rem;
       color: var(--ink-muted);
     }
-    .writing-arrow {
+    .writing-arrow,
+    .project-arrow {
       font-family: var(--mono);
       font-size: 0.9rem;
       color: var(--ink-muted);
       transition: color 0.2s, transform 0.2s;
     }
-    .writing-item:hover .writing-arrow {
+    .writing-item:hover .writing-arrow,
+    .project-item:hover .project-arrow {
       color: var(--accent);
       transform: translateX(4px);
     }
+
+    /* Homepage: the writing list and the project list side by side */
+    .home-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3rem;
+      align-items: start;
+    }
+    .home-projects .section-label {
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .home-projects .section-label::after { display: none; }
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      padding-top: 0.5rem;
+    }
+    /* Entries carry no rules or borders, so nothing in this column asks to
+       line up with the writing rows. */
+    .project-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 1rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .project-item .project-tags { margin: 0.75rem 0 0; }
 
     /* ── POST ── */
     .post {
@@ -785,6 +820,7 @@
       #hero { gap: 2.5rem; }
       #about { gap: 3rem; }
       #learning { padding: 5rem 2rem; }
+      .home-columns { grid-template-columns: 1fr; gap: 4rem; }
     }
 
     @media (max-width: 768px) {
@@ -822,7 +858,9 @@
         grid-template-columns: 1fr;
         gap: 0.35rem;
       }
-      .writing-arrow { display: none; }
+      .writing-arrow,
+      .project-arrow { display: none; }
+      .project-item { grid-template-columns: 1fr; }
 
       /* Post */
       .post {
