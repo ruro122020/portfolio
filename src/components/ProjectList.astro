@@ -1,0 +1,24 @@
+---
+// The list of projects, one row per project, each linking to its repository.
+// Rows share the writing list's look so the two sit side by side as siblings.
+interface Props {
+  projects: { name: string; description: string; tags: string[]; href: string }[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="project-list">
+  {projects.map((project, i) => (
+    <a href={project.href} class="project-item reveal" style={`transition-delay:${i * 0.07}s`} target="_blank" rel="noopener noreferrer">
+      <div>
+        <div class="project-title">{project.name}</div>
+        <div class="project-excerpt">{project.description}</div>
+        <div class="project-tags">
+          {project.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      </div>
+      <span class="project-arrow">→</span>
+    </a>
+  ))}
+</div>
